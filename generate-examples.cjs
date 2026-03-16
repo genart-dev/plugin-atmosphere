@@ -414,6 +414,94 @@ const PRESETS = [
       depthSlot: 1.0,
     },
   },
+
+  // ======== CLOUDS v0.2.0 (15 new) ========
+  {
+    id: "mackerel-sky", name: "Mackerel Sky", category: "clouds", layerType: "atmosphere:clouds", bg: "#2868C0",
+    properties: { preset: "mackerel-sky", seed: 1001, cloudType: "cirrocumulus", algorithm: "threshold", coverage: 0.5, altitude: 0.05, scale: 0.7, cloudCount: 1, edgeComplexity: 0.3, turbulence: 0.2, cloudColor: "#F0F4FF", shadowColor: "#C8D0E0", highlightColor: "#FFFFFF", opacity: 0.5, sunAngle: 135, sunElevation: 0.7, depthSlot: 1.0 },
+  },
+  {
+    id: "cirrostratus-veil", name: "Cirrostratus Veil", category: "clouds", layerType: "atmosphere:clouds", bg: "#4080C8",
+    properties: { preset: "cirrostratus-veil", seed: 1002, cloudType: "cirrostratus", algorithm: "threshold", coverage: 0.7, altitude: 0.05, scale: 1.0, cloudCount: 1, edgeComplexity: 0.15, turbulence: 0.1, cloudColor: "#F0F0F8", shadowColor: "#D8D8E4", highlightColor: "#FFFFFF", opacity: 0.35, sunAngle: 135, sunElevation: 0.65, depthSlot: 1.0 },
+  },
+  {
+    id: "altocumulus-field", name: "Altocumulus Field", category: "clouds", layerType: "atmosphere:clouds", bg: "#3070B0",
+    properties: { preset: "altocumulus-field", seed: 1003, cloudType: "altocumulus", algorithm: "threshold", coverage: 0.5, altitude: 0.1, scale: 0.8, cloudCount: 1, edgeComplexity: 0.4, turbulence: 0.3, cloudColor: "#E8ECF4", shadowColor: "#A0A8B8", highlightColor: "#F8FAFF", opacity: 0.75, sunAngle: 130, sunElevation: 0.6, depthSlot: 1.0 },
+  },
+  {
+    id: "altostratus-sheet", name: "Altostratus Sheet", category: "clouds", layerType: "atmosphere:clouds", bg: "#506880",
+    properties: { preset: "altostratus-sheet", seed: 1004, cloudType: "altostratus", algorithm: "threshold", coverage: 0.75, altitude: 0.1, scale: 1.0, cloudCount: 1, edgeComplexity: 0.2, turbulence: 0.2, cloudColor: "#C8D0DC", shadowColor: "#98A0B0", highlightColor: "#D8E0E8", opacity: 0.7, sunAngle: 135, sunElevation: 0.45, depthSlot: 1.0 },
+  },
+  {
+    id: "castellanus-turrets", name: "Castellanus Turrets", category: "clouds", layerType: "atmosphere:clouds", bg: "#3070A8",
+    properties: { preset: "castellanus-turrets", seed: 1005, cloudType: "altocumulus-castellanus", algorithm: "discrete", coverage: 0.3, altitude: 0.1, scale: 0.7, cloudCount: 6, edgeComplexity: 0.6, turbulence: 0.4, cloudColor: "#E8ECF4", shadowColor: "#90A0B0", highlightColor: "#F8FAFF", opacity: 0.8, sunAngle: 140, sunElevation: 0.55, depthSlot: 1.0 },
+  },
+  {
+    id: "cumulus-congestus", name: "Cumulus Congestus", category: "clouds", layerType: "atmosphere:clouds", bg: "#2058A0",
+    properties: { preset: "cumulus-congestus", seed: 1006, cloudType: "cumulus-congestus", algorithm: "discrete", coverage: 0.4, altitude: 0.08, scale: 1.8, cloudCount: 2, edgeComplexity: 0.85, turbulence: 0.55, cloudColor: "#F8F8FF", shadowColor: "#7080A0", highlightColor: "#FFFFFF", opacity: 0.95, sunAngle: 145, sunElevation: 0.5, depthSlot: 1.0 },
+  },
+  {
+    id: "nimbostratus-overcast", name: "Nimbostratus Overcast", category: "clouds", layerType: "atmosphere:clouds", bg: "#303840",
+    properties: { preset: "nimbostratus-overcast", seed: 1007, cloudType: "nimbostratus", algorithm: "threshold", coverage: 0.9, altitude: 0.15, scale: 1.0, cloudCount: 1, edgeComplexity: 0.25, turbulence: 0.2, cloudColor: "#8890A0", shadowColor: "#606878", highlightColor: "#A0A8B4", opacity: 0.9, sunAngle: 135, sunElevation: 0.3, depthSlot: 1.0 },
+  },
+  {
+    id: "cumulonimbus-anvil", name: "Cumulonimbus Anvil", category: "clouds", layerType: "atmosphere:clouds", bg: "#181C28",
+    properties: { preset: "cumulonimbus-anvil", seed: 1008, cloudType: "cumulonimbus-incus", algorithm: "discrete", coverage: 0.7, altitude: 0.03, scale: 2.5, cloudCount: 1, edgeComplexity: 0.9, turbulence: 0.75, cloudColor: "#A0A8B8", shadowColor: "#384050", highlightColor: "#D0D8E0", opacity: 0.95, sunAngle: 155, sunElevation: 0.35, depthSlot: 1.0 },
+  },
+  {
+    id: "lenticular-lens", name: "Lenticular Lens", category: "clouds", layerType: "atmosphere:clouds", bg: "#3870B0",
+    properties: { preset: "lenticular-lens", seed: 1009, cloudType: "lenticular", algorithm: "discrete", coverage: 0.2, altitude: 0.1, scale: 1.2, cloudCount: 2, edgeComplexity: 0.15, turbulence: 0.1, cloudColor: "#E8ECF4", shadowColor: "#A0A8BC", highlightColor: "#F8FAFF", opacity: 0.8, sunAngle: 130, sunElevation: 0.6, depthSlot: 1.0 },
+  },
+  {
+    id: "mammatus-pouches", name: "Mammatus Pouches", category: "clouds", layerType: "atmosphere:clouds", bg: "#283040",
+    properties: { preset: "mammatus-pouches", seed: 1010, cloudType: "mammatus", algorithm: "threshold", coverage: 0.6, altitude: 0.15, scale: 0.8, cloudCount: 1, edgeComplexity: 0.5, turbulence: 0.4, cloudColor: "#C8D0D8", shadowColor: "#707888", highlightColor: "#E0E4EC", opacity: 0.85, sunAngle: 160, sunElevation: 0.35, depthSlot: 1.0 },
+  },
+  {
+    id: "fog-bank-low", name: "Fog Bank Low", category: "clouds", layerType: "atmosphere:clouds", bg: "#506878",
+    properties: { preset: "fog-bank-low", seed: 1011, cloudType: "fog-bank", algorithm: "threshold", coverage: 0.7, altitude: 0.35, scale: 1.0, cloudCount: 1, edgeComplexity: 0.3, turbulence: 0.2, cloudColor: "#D8DCE4", shadowColor: "#B0B8C4", highlightColor: "#E8ECF0", opacity: 0.8, sunAngle: 135, sunElevation: 0.5, depthSlot: 1.0 },
+  },
+  {
+    id: "contrail-thin", name: "Contrail Thin", category: "clouds", layerType: "atmosphere:clouds", bg: "#2868C0",
+    properties: { preset: "contrail-thin", seed: 1012, cloudType: "contrail", algorithm: "streak", coverage: 0.1, altitude: 0.05, scale: 1.5, cloudCount: 2, edgeComplexity: 0.1, turbulence: 0.05, cloudColor: "#F0F4FF", shadowColor: "#D8E0EC", highlightColor: "#FFFFFF", opacity: 0.35, sunAngle: 135, sunElevation: 0.7, depthSlot: 1.0 },
+  },
+  {
+    id: "pyrocumulus-dark", name: "Pyrocumulus Dark", category: "clouds", layerType: "atmosphere:clouds", bg: "#201820",
+    properties: { preset: "pyrocumulus-dark", seed: 1013, cloudType: "pyrocumulus", algorithm: "discrete", coverage: 0.5, altitude: 0.08, scale: 1.8, cloudCount: 2, edgeComplexity: 0.9, turbulence: 0.8, cloudColor: "#8088A0", shadowColor: "#303840", highlightColor: "#B0B8C8", opacity: 0.9, sunAngle: 145, sunElevation: 0.4, depthSlot: 1.0 },
+  },
+  {
+    id: "banner-peak", name: "Banner Peak", category: "clouds", layerType: "atmosphere:clouds", bg: "#3868A0",
+    properties: { preset: "banner-peak", seed: 1014, cloudType: "banner-cloud", algorithm: "discrete", coverage: 0.25, altitude: 0.12, scale: 1.0, cloudCount: 3, edgeComplexity: 0.5, turbulence: 0.35, cloudColor: "#E0E4EC", shadowColor: "#98A0B0", highlightColor: "#F0F4F8", opacity: 0.7, sunAngle: 130, sunElevation: 0.55, depthSlot: 1.0 },
+  },
+  {
+    id: "pileus-cap", name: "Pileus Cap", category: "clouds", layerType: "atmosphere:clouds", bg: "#3070B8",
+    properties: { preset: "pileus-cap", seed: 1015, cloudType: "pileus", algorithm: "streak", coverage: 0.15, altitude: 0.08, scale: 1.0, cloudCount: 3, edgeComplexity: 0.2, turbulence: 0.1, cloudColor: "#F0F4FF", shadowColor: "#D0D8E8", highlightColor: "#FFFFFF", opacity: 0.3, sunAngle: 135, sunElevation: 0.65, depthSlot: 1.0 },
+  },
+
+  // ======== HAZE (6) ========
+  {
+    id: "light-haze", name: "Light Haze", category: "haze", layerType: "atmosphere:haze", bg: "#1a2030",
+    properties: { preset: "light-haze", seed: 2001, color: "#D8E0EC", opacity: 0.25, yPosition: 0.3, height: 0.5, gradientDirection: "bottom-up", noiseAmount: 0.2, depthSlot: 0.4 },
+  },
+  {
+    id: "golden-haze", name: "Golden Haze", category: "haze", layerType: "atmosphere:haze", bg: "#301838",
+    properties: { preset: "golden-haze", seed: 2002, color: "#E8D8C0", opacity: 0.3, yPosition: 0.25, height: 0.55, gradientDirection: "bottom-up", noiseAmount: 0.25, depthSlot: 0.4 },
+  },
+  {
+    id: "cool-mist-haze", name: "Cool Mist Haze", category: "haze", layerType: "atmosphere:haze", bg: "#0e1828",
+    properties: { preset: "cool-mist-haze", seed: 2003, color: "#C0C8D8", opacity: 0.35, yPosition: 0.3, height: 0.5, gradientDirection: "bottom-up", noiseAmount: 0.3, depthSlot: 0.5 },
+  },
+  {
+    id: "heat-haze", name: "Heat Haze", category: "haze", layerType: "atmosphere:haze", bg: "#382818",
+    properties: { preset: "heat-haze", seed: 2004, color: "#E0D8D0", opacity: 0.2, yPosition: 0.6, height: 0.35, gradientDirection: "top-down", noiseAmount: 0.5, depthSlot: 0.3 },
+  },
+  {
+    id: "ink-wash-haze", name: "Ink Wash Haze", category: "haze", layerType: "atmosphere:haze", bg: "#181818",
+    properties: { preset: "ink-wash-haze", seed: 2005, color: "#C8C8D0", opacity: 0.4, yPosition: 0.2, height: 0.6, gradientDirection: "bottom-up", noiseAmount: 0.15, depthSlot: 0.5 },
+  },
+  {
+    id: "twilight-haze", name: "Twilight Haze", category: "haze", layerType: "atmosphere:haze", bg: "#101020",
+    properties: { preset: "twilight-haze", seed: 2006, color: "#9898B8", opacity: 0.35, yPosition: 0.2, height: 0.6, gradientDirection: "bottom-up", noiseAmount: 0.2, depthSlot: 0.45 },
+  },
 ];
 
 // --- Mood scene recipes (multi-layer) ---
@@ -510,7 +598,7 @@ function findPreset(presetId) {
 }
 
 // Ensure example directories exist
-const categories = ["fog", "mist", "clouds", "scenes"];
+const categories = ["fog", "mist", "clouds", "haze", "scenes"];
 for (const cat of categories) {
   fs.mkdirSync(path.join(examplesDir, cat), { recursive: true });
 }

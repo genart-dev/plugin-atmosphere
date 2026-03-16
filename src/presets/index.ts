@@ -2,12 +2,14 @@ import type { AtmospherePreset, PresetCategory } from "./types.js";
 import { FOG_PRESETS } from "./fog.js";
 import { MIST_PRESETS } from "./mist.js";
 import { CLOUD_PRESETS } from "./clouds.js";
+import { HAZE_PRESETS } from "./haze.js";
 
 /** All atmosphere presets. */
 export const ALL_PRESETS: AtmospherePreset[] = [
   ...FOG_PRESETS,
   ...MIST_PRESETS,
   ...CLOUD_PRESETS,
+  ...HAZE_PRESETS,
 ];
 
 const PRESET_MAP = new Map<string, AtmospherePreset>(
@@ -41,5 +43,6 @@ export function categoryToLayerType(category: PresetCategory): string {
     case "fog": return "atmosphere:fog";
     case "mist": return "atmosphere:mist";
     case "clouds": return "atmosphere:clouds";
+    case "haze": return "atmosphere:haze";
   }
 }

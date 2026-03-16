@@ -1,0 +1,86 @@
+{
+  "genart": "1.3",
+  "id": "atmosphere-lenticular-lens",
+  "title": "Lenticular Lens",
+  "created": "2026-03-15T00:00:00.000Z",
+  "modified": "2026-03-15T00:00:00.000Z",
+  "renderer": {
+    "type": "canvas2d"
+  },
+  "canvas": {
+    "width": 600,
+    "height": 600
+  },
+  "parameters": [],
+  "colors": [],
+  "state": {
+    "seed": 42,
+    "params": {},
+    "colorPalette": []
+  },
+  "algorithm": "function sketch(ctx, state) {}",
+  "layers": [
+    {
+      "id": "bg-layer",
+      "type": "composite:solid",
+      "name": "Background",
+      "visible": true,
+      "locked": false,
+      "opacity": 1,
+      "blendMode": "normal",
+      "transform": {
+        "x": 0,
+        "y": 0,
+        "width": 600,
+        "height": 600,
+        "rotation": 0,
+        "scaleX": 1,
+        "scaleY": 1,
+        "anchorX": 0,
+        "anchorY": 0
+      },
+      "properties": {
+        "color": "#3870B0"
+      }
+    },
+    {
+      "id": "atmosphere-layer",
+      "type": "atmosphere:clouds",
+      "name": "Lenticular Lens",
+      "visible": true,
+      "locked": false,
+      "opacity": 1,
+      "blendMode": "normal",
+      "transform": {
+        "x": 0,
+        "y": 0,
+        "width": 600,
+        "height": 600,
+        "rotation": 0,
+        "scaleX": 1,
+        "scaleY": 1,
+        "anchorX": 0,
+        "anchorY": 0
+      },
+      "properties": {
+        "preset": "lenticular-lens",
+        "seed": 1009,
+        "cloudType": "lenticular",
+        "algorithm": "discrete",
+        "coverage": 0.2,
+        "altitude": 0.1,
+        "scale": 1.2,
+        "cloudCount": 2,
+        "edgeComplexity": 0.15,
+        "turbulence": 0.1,
+        "cloudColor": "#E8ECF4",
+        "shadowColor": "#A0A8BC",
+        "highlightColor": "#F8FAFF",
+        "opacity": 0.8,
+        "sunAngle": 130,
+        "sunElevation": 0.6,
+        "depthSlot": 1
+      }
+    }
+  ]
+}

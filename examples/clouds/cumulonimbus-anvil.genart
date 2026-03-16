@@ -1,0 +1,86 @@
+{
+  "genart": "1.3",
+  "id": "atmosphere-cumulonimbus-anvil",
+  "title": "Cumulonimbus Anvil",
+  "created": "2026-03-15T00:00:00.000Z",
+  "modified": "2026-03-15T00:00:00.000Z",
+  "renderer": {
+    "type": "canvas2d"
+  },
+  "canvas": {
+    "width": 600,
+    "height": 600
+  },
+  "parameters": [],
+  "colors": [],
+  "state": {
+    "seed": 42,
+    "params": {},
+    "colorPalette": []
+  },
+  "algorithm": "function sketch(ctx, state) {}",
+  "layers": [
+    {
+      "id": "bg-layer",
+      "type": "composite:solid",
+      "name": "Background",
+      "visible": true,
+      "locked": false,
+      "opacity": 1,
+      "blendMode": "normal",
+      "transform": {
+        "x": 0,
+        "y": 0,
+        "width": 600,
+        "height": 600,
+        "rotation": 0,
+        "scaleX": 1,
+        "scaleY": 1,
+        "anchorX": 0,
+        "anchorY": 0
+      },
+      "properties": {
+        "color": "#181C28"
+      }
+    },
+    {
+      "id": "atmosphere-layer",
+      "type": "atmosphere:clouds",
+      "name": "Cumulonimbus Anvil",
+      "visible": true,
+      "locked": false,
+      "opacity": 1,
+      "blendMode": "normal",
+      "transform": {
+        "x": 0,
+        "y": 0,
+        "width": 600,
+        "height": 600,
+        "rotation": 0,
+        "scaleX": 1,
+        "scaleY": 1,
+        "anchorX": 0,
+        "anchorY": 0
+      },
+      "properties": {
+        "preset": "cumulonimbus-anvil",
+        "seed": 1008,
+        "cloudType": "cumulonimbus-incus",
+        "algorithm": "discrete",
+        "coverage": 0.7,
+        "altitude": 0.03,
+        "scale": 2.5,
+        "cloudCount": 1,
+        "edgeComplexity": 0.9,
+        "turbulence": 0.75,
+        "cloudColor": "#A0A8B8",
+        "shadowColor": "#384050",
+        "highlightColor": "#D0D8E0",
+        "opacity": 0.95,
+        "sunAngle": 155,
+        "sunElevation": 0.35,
+        "depthSlot": 1
+      }
+    }
+  ]
+}

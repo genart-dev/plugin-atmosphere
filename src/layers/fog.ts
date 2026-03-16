@@ -13,8 +13,9 @@ import type {
   ValidationError,
 } from "@genart-dev/core";
 import { createFractalNoise, createWarpedNoise } from "../shared/noise.js";
+import { mulberry32 } from "../shared/prng.js";
 import { parseHex } from "../shared/color-utils.js";
-import { createDefaultProps, smoothstep } from "./shared.js";
+import { createDefaultProps, smoothstep, bilinearUpscale } from "./shared.js";
 import { getPreset } from "../presets/index.js";
 import type { FogPreset } from "../presets/types.js";
 
@@ -58,6 +59,8 @@ const FOG_PROPERTIES: LayerPropertySchema[] = [
   { key: "noiseOctaves", label: "Noise Octaves", type: "number", default: 3, min: 1, max: 6, step: 1, group: "shape" },
   { key: "patchiness", label: "Patchiness", type: "number", default: 0.3, min: 0, max: 1, step: 0.05, group: "shape" },
   { key: "warpStrength", label: "Warp Strength", type: "number", default: 0.2, min: 0, max: 1, step: 0.05, group: "shape" },
+  { key: "fogLayers", label: "Fog Layers", type: "number", default: 1, min: 1, max: 5, step: 1, group: "depth" },
+  { key: "wispDensity", label: "Wisp Density", type: "number", default: 0, min: 0, max: 1, step: 0.05, group: "shape" },
   { key: "depthSlot", label: "Depth Slot", type: "number", default: 0.2, min: 0, max: 1, step: 0.05, group: "depth" },
 ];
 
@@ -75,6 +78,8 @@ interface ResolvedFogProps {
   noiseOctaves: number;
   patchiness: number;
   warpStrength: number;
+  fogLayers: number;
+  wispDensity: number;
   depthSlot: number;
 }
 
@@ -97,6 +102,8 @@ function resolveProps(properties: LayerProperties): ResolvedFogProps {
     noiseOctaves: (properties.noiseOctaves as number) ?? fp?.noiseOctaves ?? 3,
     patchiness: (properties.patchiness as number) ?? fp?.patchiness ?? 0.3,
     warpStrength: (properties.warpStrength as number) ?? fp?.warpStrength ?? 0.2,
+    fogLayers: (properties.fogLayers as number) ?? fp?.fogLayers ?? 1,
+    wispDensity: (properties.wispDensity as number) ?? fp?.wispDensity ?? 0,
     depthSlot: (properties.depthSlot as number) ?? 0.2,
   };
 }
@@ -126,16 +133,6 @@ export const fogLayerType: LayerTypeDefinition = {
     const [topR, topG, topB] = parseHex(p.color);
     const [botR, botG, botB] = parseHex(p.colorBottom);
 
-    // Use warped noise for organic fog shapes
-    const noise = p.warpStrength > 0
-      ? createWarpedNoise(p.seed, p.noiseOctaves, p.warpStrength)
-      : createFractalNoise(p.seed, p.noiseOctaves);
-
-    // Patchiness: secondary large-scale noise for gaps
-    const patchNoise = p.patchiness > 0
-      ? createFractalNoise(p.seed + 5003, 2, 2.0, 0.5)
-      : null;
-
     // Density threshold — lower = more fog
     const threshold = 1 - p.density;
 
@@ -147,84 +144,127 @@ export const fogLayerType: LayerTypeDefinition = {
     const imageData = ctx.createImageData(rw, rh);
     const data = imageData.data;
 
-    for (let ry = 0; ry < rh; ry++) {
-      const normalizedY = ry / rh;
+    // Multi-layer fog stacking
+    const numLayers = Math.max(1, Math.min(5, p.fogLayers));
+    for (let li = 0; li < numLayers; li++) {
+      const layerSeed = p.seed + li * 7919;
+      // Progressive noise scale: front layers finer, back layers coarser
+      const layerT = numLayers > 1 ? li / (numLayers - 1) : 0;
+      const effectiveNoiseScale = p.noiseScale * (0.85 + layerT * 0.3);
+      // Progressive opacity: deeper layers denser
+      const layerOpacity = numLayers > 1
+        ? p.opacity * (0.5 + 0.5 * li / (numLayers - 1)) / numLayers
+        : p.opacity;
+      // Sub-layers distributed vertically within the band
+      const layerYOffset = numLayers > 1 ? (li - (numLayers - 1) / 2) * 0.1 : 0;
 
-      // Vertical edge softness (top and bottom fade)
-      let edgeAlpha = 1;
-      if (normalizedY < p.edgeSoftness) {
-        edgeAlpha = smoothstep(normalizedY / p.edgeSoftness);
-      } else if (normalizedY > 1 - p.edgeSoftness) {
-        edgeAlpha = smoothstep((1 - normalizedY) / p.edgeSoftness);
-      }
+      const noise = p.warpStrength > 0
+        ? createWarpedNoise(layerSeed, p.noiseOctaves, p.warpStrength)
+        : createFractalNoise(layerSeed, p.noiseOctaves);
 
-      // Fog type modifiers: valley fog is denser at bottom, upslope has gradient
-      let typeMult = 1;
-      if (p.fogType === "valley") {
-        typeMult = 0.6 + 0.4 * normalizedY; // denser at bottom
-      } else if (p.fogType === "upslope") {
-        typeMult = 0.7 + 0.3 * (1 - normalizedY); // denser at top
-      }
+      const patchNoise = p.patchiness > 0
+        ? createFractalNoise(layerSeed + 5003, 2, 2.0, 0.5)
+        : null;
 
-      // Vertical color gradient
-      const gr = Math.round(topR + (botR - topR) * normalizedY);
-      const gg = Math.round(topG + (botG - topG) * normalizedY);
-      const gb = Math.round(topB + (botB - topB) * normalizedY);
+      for (let ry = 0; ry < rh; ry++) {
+        const normalizedY = Math.max(0, Math.min(1, ry / rh + layerYOffset));
 
-      for (let rx = 0; rx < rw; rx++) {
-        const normalizedX = rx / rw;
-
-        const nx = normalizedX * p.noiseScale;
-        const ny = normalizedY * p.noiseScale;
-
-        let n = noise(nx, ny);
-
-        // Apply patchiness — large-scale noise gaps
-        if (patchNoise && p.patchiness > 0) {
-          const patchVal = patchNoise(normalizedX * 1.5, normalizedY * 1.5);
-          // patchiness = 1 means large clear gaps; patchVal < patchiness threshold = gap
-          if (patchVal < p.patchiness * 0.5) {
-            n *= patchVal / (p.patchiness * 0.5); // fade out in patch gaps
-          }
+        let edgeAlpha = 1;
+        if (normalizedY < p.edgeSoftness) {
+          edgeAlpha = smoothstep(normalizedY / p.edgeSoftness);
+        } else if (normalizedY > 1 - p.edgeSoftness) {
+          edgeAlpha = smoothstep((1 - normalizedY) / p.edgeSoftness);
         }
 
-        if (n > threshold) {
-          const aboveThreshold = (n - threshold) / (1 - threshold);
-          const alpha = Math.min(1, aboveThreshold * 2) * edgeAlpha * p.opacity * typeMult;
+        let typeMult = 1;
+        if (p.fogType === "valley") {
+          typeMult = 0.6 + 0.4 * normalizedY;
+        } else if (p.fogType === "upslope") {
+          typeMult = 0.7 + 0.3 * (1 - normalizedY);
+        }
 
-          if (alpha > 0.01) {
-            const idx = (ry * rw + rx) * 4;
-            const existingA = data[idx + 3]! / 255;
-            const newA = alpha * (1 - existingA);
-            const totalA = existingA + newA;
+        const gr = Math.round(topR + (botR - topR) * normalizedY);
+        const gg = Math.round(topG + (botG - topG) * normalizedY);
+        const gb = Math.round(topB + (botB - topB) * normalizedY);
 
-            if (totalA > 0) {
-              data[idx] = Math.round((data[idx]! * existingA + gr * newA) / totalA);
-              data[idx + 1] = Math.round((data[idx + 1]! * existingA + gg * newA) / totalA);
-              data[idx + 2] = Math.round((data[idx + 2]! * existingA + gb * newA) / totalA);
-              data[idx + 3] = Math.round(totalA * 255);
+        for (let rx = 0; rx < rw; rx++) {
+          const normalizedX = rx / rw;
+          const nx = normalizedX * effectiveNoiseScale;
+          const ny = normalizedY * effectiveNoiseScale;
+
+          let n = noise(nx, ny);
+
+          if (patchNoise && p.patchiness > 0) {
+            const patchVal = patchNoise(normalizedX * 1.5, normalizedY * 1.5);
+            if (patchVal < p.patchiness * 0.5) {
+              n *= patchVal / (p.patchiness * 0.5);
+            }
+          }
+
+          if (n > threshold) {
+            const aboveThreshold = (n - threshold) / (1 - threshold);
+            const alpha = Math.min(1, aboveThreshold * 2) * edgeAlpha * layerOpacity * typeMult;
+
+            if (alpha > 0.01) {
+              const idx = (ry * rw + rx) * 4;
+              const existingA = data[idx + 3]! / 255;
+              const newA = alpha * (1 - existingA);
+              const totalA = existingA + newA;
+
+              if (totalA > 0) {
+                data[idx] = Math.round((data[idx]! * existingA + gr * newA) / totalA);
+                data[idx + 1] = Math.round((data[idx + 1]! * existingA + gg * newA) / totalA);
+                data[idx + 2] = Math.round((data[idx + 2]! * existingA + gb * newA) / totalA);
+                data[idx + 3] = Math.round(totalA * 255);
+              }
             }
           }
         }
       }
     }
 
-    // Scale up to full resolution
+    // Bilinear upscale to full resolution
     const fullImageData = ctx.createImageData(width, fogHeight);
-    const fullData = fullImageData.data;
-    for (let fy = 0; fy < fogHeight; fy++) {
-      const ry = Math.min(Math.floor((fy / fogHeight) * rh), rh - 1);
-      for (let fx = 0; fx < width; fx++) {
-        const rx = Math.min(Math.floor((fx / width) * rw), rw - 1);
-        const src = (ry * rw + rx) * 4;
-        const dst = (fy * width + fx) * 4;
-        fullData[dst] = data[src]!;
-        fullData[dst + 1] = data[src + 1]!;
-        fullData[dst + 2] = data[src + 2]!;
-        fullData[dst + 3] = data[src + 3]!;
+    bilinearUpscale(data, rw, rh, fullImageData.data, width, fogHeight);
+    ctx.putImageData(fullImageData, bx, fogTopPx);
+
+    // Fog wisps: elliptical tendrils at top/bottom edges of fog band
+    if (p.wispDensity > 0) {
+      const rng = mulberry32(p.seed + 8819);
+      const wispCount = Math.floor(p.wispDensity * 25);
+      const bandH = fogHeight;
+      const [wr, wg, wb] = [
+        Math.round((topR + botR) / 2),
+        Math.round((topG + botG) / 2),
+        Math.round((topB + botB) / 2),
+      ];
+
+      for (let w = 0; w < wispCount; w++) {
+        const atTop = rng() > 0.5;
+        const anchorX = rng() * width;
+        const anchorY = atTop ? fogTopPx : fogBottomPx;
+        const extendDir = atTop ? -1 : 1;
+        const extendDist = bandH * (0.1 + rng() * 0.2);
+        const wispW = 15 + rng() * 40;
+        const wispH = extendDist;
+        const wispAlpha = p.opacity * (0.15 + rng() * 0.25);
+
+        // Draw elliptical wisp tendril
+        ctx.save();
+        ctx.globalAlpha = wispAlpha;
+        ctx.beginPath();
+        ctx.ellipse(
+          bx + anchorX,
+          anchorY + extendDir * extendDist * 0.5,
+          wispW,
+          wispH * 0.5,
+          0, 0, Math.PI * 2,
+        );
+        ctx.fillStyle = `rgb(${wr},${wg},${wb})`;
+        ctx.fill();
+        ctx.restore();
       }
     }
-    ctx.putImageData(fullImageData, bx, fogTopPx);
   },
 
   validate(properties): ValidationError[] | null {

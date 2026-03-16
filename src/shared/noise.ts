@@ -1,6 +1,49 @@
 import { mulberry32 } from "./prng.js";
 
 /**
+ * 2D Worley (cellular) noise using a seeded set of feature points.
+ * Returns float in [0, 1] where 0 = on a feature point, 1 = far from any.
+ * For stratocumulus "mackerel sky" patterns, use `1 - worley(x,y)`.
+ */
+export function createWorleyNoise(
+  seed: number,
+  numPoints: number = 20,
+): (x: number, y: number) => number {
+  const rand = mulberry32(seed);
+  // Generate feature points in unit square
+  const points: [number, number][] = [];
+  for (let i = 0; i < numPoints; i++) {
+    points.push([rand(), rand()]);
+  }
+
+  // Normalization: approximate max distance = 1/sqrt(numPoints)
+  const maxDist = 1 / Math.sqrt(numPoints);
+
+  return (x: number, y: number): number => {
+    // Wrap to [0,1)
+    const wx = ((x % 1) + 1) % 1;
+    const wy = ((y % 1) + 1) % 1;
+
+    let minDist = Infinity;
+    // Check 3x3 tiling for seamless edges
+    for (let ox = -1; ox <= 1; ox++) {
+      for (let oy = -1; oy <= 1; oy++) {
+        for (let i = 0; i < numPoints; i++) {
+          const px = points[i]![0] + ox;
+          const py = points[i]![1] + oy;
+          const dx = wx - px;
+          const dy = wy - py;
+          const d = Math.sqrt(dx * dx + dy * dy);
+          if (d < minDist) minDist = d;
+        }
+      }
+    }
+
+    return Math.min(1, minDist / maxDist);
+  };
+}
+
+/**
  * 2D value noise using a seeded permutation table.
  * Returns float in [0, 1].
  */

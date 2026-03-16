@@ -8,8 +8,8 @@ import {
 } from "../src/presets/index.js";
 
 describe("presets", () => {
-  it("ALL_PRESETS has 16 presets (5 fog + 4 mist + 7 clouds)", () => {
-    expect(ALL_PRESETS).toHaveLength(16);
+  it("ALL_PRESETS has 37 presets (5 fog + 4 mist + 22 clouds + 6 haze)", () => {
+    expect(ALL_PRESETS).toHaveLength(37);
   });
 
   it("each preset has required fields", () => {
@@ -42,7 +42,8 @@ describe("presets", () => {
   it("filterPresets returns correct counts", () => {
     expect(filterPresets("fog")).toHaveLength(5);
     expect(filterPresets("mist")).toHaveLength(4);
-    expect(filterPresets("clouds")).toHaveLength(7);
+    expect(filterPresets("clouds")).toHaveLength(22);
+    expect(filterPresets("haze")).toHaveLength(6);
   });
 
   it("searchPresets finds by tag", () => {
@@ -65,6 +66,7 @@ describe("presets", () => {
     expect(categoryToLayerType("fog")).toBe("atmosphere:fog");
     expect(categoryToLayerType("mist")).toBe("atmosphere:mist");
     expect(categoryToLayerType("clouds")).toBe("atmosphere:clouds");
+    expect(categoryToLayerType("haze")).toBe("atmosphere:haze");
   });
 
   // Fog preset detail checks

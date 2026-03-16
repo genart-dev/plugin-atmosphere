@@ -22,8 +22,8 @@ function findTool(name: string) {
 }
 
 describe("atmosphere MCP tools", () => {
-  it("has 6 tools", () => {
-    expect(atmosphereMcpTools).toHaveLength(6);
+  it("has 7 tools", () => {
+    expect(atmosphereMcpTools).toHaveLength(7);
   });
 
   it("all tools have name, description, inputSchema, handler", () => {
@@ -122,7 +122,7 @@ describe("atmosphere MCP tools", () => {
       const ctx = createMockContext();
       const result = await findTool("list_atmosphere_presets").handler({}, ctx);
       const parsed = JSON.parse(result.content[0]!.text as string);
-      expect(parsed.count).toBe(16);
+      expect(parsed.count).toBe(37);
     });
 
     it("filters by category", async () => {
@@ -177,11 +177,11 @@ describe("atmosphere MCP tools", () => {
       expect(parsed.count).toBe(2);
     });
 
-    it("creates misty-mountain scene with 2 layers", async () => {
+    it("creates misty-mountain scene with 3 layers", async () => {
       const ctx = createMockContext();
       const result = await findTool("create_atmosphere").handler({ mood: "misty-mountain" }, ctx);
       const parsed = JSON.parse(result.content[0]!.text as string);
-      expect(parsed.count).toBe(2);
+      expect(parsed.count).toBe(3);
     });
 
     it("creates clear-day scene with 1 layer", async () => {
@@ -191,11 +191,11 @@ describe("atmosphere MCP tools", () => {
       expect(parsed.count).toBe(1);
     });
 
-    it("creates golden-sunset scene with 2 layers", async () => {
+    it("creates golden-sunset scene with 3 layers", async () => {
       const ctx = createMockContext();
       const result = await findTool("create_atmosphere").handler({ mood: "golden-sunset" }, ctx);
       const parsed = JSON.parse(result.content[0]!.text as string);
-      expect(parsed.count).toBe(2);
+      expect(parsed.count).toBe(3);
     });
 
     it("returns error for unknown mood", async () => {

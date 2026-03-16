@@ -14,7 +14,7 @@ import type {
 } from "@genart-dev/core";
 import { createFractalNoise } from "../shared/noise.js";
 import { parseHex } from "../shared/color-utils.js";
-import { createDefaultProps, smoothstep } from "./shared.js";
+import { createDefaultProps, smoothstep, bilinearUpscale } from "./shared.js";
 import { getPreset } from "../presets/index.js";
 import type { MistPreset } from "../presets/types.js";
 
@@ -45,6 +45,8 @@ const MIST_PROPERTIES: LayerPropertySchema[] = [
   { key: "driftPhase", label: "Drift Phase", type: "number", default: 0, min: 0, max: 6.28, step: 0.1, group: "motion" },
   { key: "layerCount", label: "Layer Count", type: "number", default: 3, min: 1, max: 8, step: 1, group: "depth" },
   { key: "depthSpread", label: "Depth Spread", type: "number", default: 0.2, min: 0, max: 0.5, step: 0.05, group: "depth" },
+  { key: "skyColor", label: "Sky Color", type: "color", default: "#C0D0E8", group: "style" },
+  { key: "colorShift", label: "Color Shift", type: "number", default: 0, min: 0, max: 1, step: 0.05, group: "style" },
   { key: "depthSlot", label: "Depth Slot", type: "number", default: 0.6, min: 0, max: 1, step: 0.05, group: "depth" },
 ];
 
@@ -62,6 +64,8 @@ interface ResolvedMistProps {
   driftPhase: number;
   layerCount: number;
   depthSpread: number;
+  skyColor: string;
+  colorShift: number;
   depthSlot: number;
 }
 
@@ -84,6 +88,8 @@ function resolveProps(properties: LayerProperties): ResolvedMistProps {
     driftPhase: (properties.driftPhase as number) ?? mp?.driftPhase ?? 0,
     layerCount: (properties.layerCount as number) ?? mp?.layerCount ?? 3,
     depthSpread: (properties.depthSpread as number) ?? mp?.depthSpread ?? 0.2,
+    skyColor: (properties.skyColor as string) || mp?.skyColor || "#C0D0E8",
+    colorShift: (properties.colorShift as number) ?? mp?.colorShift ?? 0,
     depthSlot: (properties.depthSlot as number) ?? 0.6,
   };
 }
@@ -111,6 +117,7 @@ export const mistLayerType: LayerTypeDefinition = {
     if (bandHeight <= 0) return;
 
     const [cr, cg, cb] = parseHex(p.color);
+    const [skR, skG, skB] = parseHex(p.skyColor);
     const threshold = 1 - p.density;
 
     // Render at 1/4 resolution for performance
@@ -130,6 +137,12 @@ export const mistLayerType: LayerTypeDefinition = {
       // Vary noise scale per layer for distinct feature sizes (front = finer, back = coarser)
       const layerT = p.layerCount > 1 ? layer / (p.layerCount - 1) : 0.5;
       const effectiveNoiseScale = p.noiseScale * (0.85 + layerT * 0.3);
+
+      // Per-layer atmospheric color shift: back layers shift toward skyColor
+      const shiftT = layerT * p.colorShift;
+      const lr = Math.round(cr + (skR - cr) * shiftT);
+      const lg = Math.round(cg + (skG - cg) * shiftT);
+      const lb = Math.round(cb + (skB - cb) * shiftT);
 
       for (let ry = 0; ry < rh; ry++) {
         const normalizedY = ry / rh;
@@ -161,9 +174,9 @@ export const mistLayerType: LayerTypeDefinition = {
               const totalA = existingA + newA;
 
               if (totalA > 0) {
-                data[idx] = Math.round((data[idx]! * existingA + cr * newA) / totalA);
-                data[idx + 1] = Math.round((data[idx + 1]! * existingA + cg * newA) / totalA);
-                data[idx + 2] = Math.round((data[idx + 2]! * existingA + cb * newA) / totalA);
+                data[idx] = Math.round((data[idx]! * existingA + lr * newA) / totalA);
+                data[idx + 1] = Math.round((data[idx + 1]! * existingA + lg * newA) / totalA);
+                data[idx + 2] = Math.round((data[idx + 2]! * existingA + lb * newA) / totalA);
                 data[idx + 3] = Math.round(totalA * 255);
               }
             }
@@ -172,21 +185,9 @@ export const mistLayerType: LayerTypeDefinition = {
       }
     }
 
-    // Scale up to full resolution
+    // Bilinear upscale to full resolution
     const fullImageData = ctx.createImageData(width, bandHeight);
-    const fullData = fullImageData.data;
-    for (let fy = 0; fy < bandHeight; fy++) {
-      const ry = Math.min(Math.floor((fy / bandHeight) * rh), rh - 1);
-      for (let fx = 0; fx < width; fx++) {
-        const rx = Math.min(Math.floor((fx / width) * rw), rw - 1);
-        const src = (ry * rw + rx) * 4;
-        const dst = (fy * width + fx) * 4;
-        fullData[dst] = data[src]!;
-        fullData[dst + 1] = data[src + 1]!;
-        fullData[dst + 2] = data[src + 2]!;
-        fullData[dst + 3] = data[src + 3]!;
-      }
-    }
+    bilinearUpscale(data, rw, rh, fullImageData.data, width, bandHeight);
     ctx.putImageData(fullImageData, bx, bandTopPx);
   },
 

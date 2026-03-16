@@ -1,6 +1,6 @@
 {
   "name": "@genart-dev/plugin-atmosphere",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Atmospheric effects for genart.dev — fog, mist, and cloud layers with terrain masking and depth stacking",
   "type": "module",
   "main": "./dist/index.cjs",

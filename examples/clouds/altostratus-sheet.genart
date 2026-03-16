@@ -1,0 +1,86 @@
+{
+  "genart": "1.3",
+  "id": "atmosphere-altostratus-sheet",
+  "title": "Altostratus Sheet",
+  "created": "2026-03-15T00:00:00.000Z",
+  "modified": "2026-03-15T00:00:00.000Z",
+  "renderer": {
+    "type": "canvas2d"
+  },
+  "canvas": {
+    "width": 600,
+    "height": 600
+  },
+  "parameters": [],
+  "colors": [],
+  "state": {
+    "seed": 42,
+    "params": {},
+    "colorPalette": []
+  },
+  "algorithm": "function sketch(ctx, state) {}",
+  "layers": [
+    {
+      "id": "bg-layer",
+      "type": "composite:solid",
+      "name": "Background",
+      "visible": true,
+      "locked": false,
+      "opacity": 1,
+      "blendMode": "normal",
+      "transform": {
+        "x": 0,
+        "y": 0,
+        "width": 600,
+        "height": 600,
+        "rotation": 0,
+        "scaleX": 1,
+        "scaleY": 1,
+        "anchorX": 0,
+        "anchorY": 0
+      },
+      "properties": {
+        "color": "#506880"
+      }
+    },
+    {
+      "id": "atmosphere-layer",
+      "type": "atmosphere:clouds",
+      "name": "Altostratus Sheet",
+      "visible": true,
+      "locked": false,
+      "opacity": 1,
+      "blendMode": "normal",
+      "transform": {
+        "x": 0,
+        "y": 0,
+        "width": 600,
+        "height": 600,
+        "rotation": 0,
+        "scaleX": 1,
+        "scaleY": 1,
+        "anchorX": 0,
+        "anchorY": 0
+      },
+      "properties": {
+        "preset": "altostratus-sheet",
+        "seed": 1004,
+        "cloudType": "altostratus",
+        "algorithm": "threshold",
+        "coverage": 0.75,
+        "altitude": 0.1,
+        "scale": 1,
+        "cloudCount": 1,
+        "edgeComplexity": 0.2,
+        "turbulence": 0.2,
+        "cloudColor": "#C8D0DC",
+        "shadowColor": "#98A0B0",
+        "highlightColor": "#D8E0E8",
+        "opacity": 0.7,
+        "sunAngle": 135,
+        "sunElevation": 0.45,
+        "depthSlot": 1
+      }
+    }
+  ]
+}
