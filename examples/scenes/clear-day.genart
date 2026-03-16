@@ -1,0 +1,86 @@
+{
+  "genart": "1.3",
+  "id": "scene-clear-day",
+  "title": "Clear Day (Scene)",
+  "created": "2026-03-15T00:00:00.000Z",
+  "modified": "2026-03-15T00:00:00.000Z",
+  "renderer": {
+    "type": "canvas2d"
+  },
+  "canvas": {
+    "width": 600,
+    "height": 600
+  },
+  "parameters": [],
+  "colors": [],
+  "state": {
+    "seed": 42,
+    "params": {},
+    "colorPalette": []
+  },
+  "algorithm": "function sketch(ctx, state) {}",
+  "layers": [
+    {
+      "id": "bg-layer",
+      "type": "composite:solid",
+      "name": "Background",
+      "visible": true,
+      "locked": false,
+      "opacity": 1,
+      "blendMode": "normal",
+      "transform": {
+        "x": 0,
+        "y": 0,
+        "width": 600,
+        "height": 600,
+        "rotation": 0,
+        "scaleX": 1,
+        "scaleY": 1,
+        "anchorX": 0,
+        "anchorY": 0
+      },
+      "properties": {
+        "color": "#3878C8"
+      }
+    },
+    {
+      "id": "layer-0",
+      "type": "atmosphere:clouds",
+      "name": "Fair Weather Cumulus",
+      "visible": true,
+      "locked": false,
+      "opacity": 1,
+      "blendMode": "normal",
+      "transform": {
+        "x": 0,
+        "y": 0,
+        "width": 600,
+        "height": 600,
+        "rotation": 0,
+        "scaleX": 1,
+        "scaleY": 1,
+        "anchorX": 0,
+        "anchorY": 0
+      },
+      "properties": {
+        "preset": "fair-weather-cumulus",
+        "seed": 4421,
+        "cloudType": "cumulus",
+        "algorithm": "discrete",
+        "coverage": 0.3,
+        "altitude": 0.15,
+        "scale": 1,
+        "cloudCount": 5,
+        "edgeComplexity": 0.6,
+        "turbulence": 0.3,
+        "cloudColor": "#FFFFFF",
+        "shadowColor": "#B0B8C8",
+        "highlightColor": "#FFFFFF",
+        "opacity": 0.9,
+        "sunAngle": 135,
+        "sunElevation": 0.6,
+        "depthSlot": 1
+      }
+    }
+  ]
+}
