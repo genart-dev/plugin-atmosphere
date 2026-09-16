@@ -748,6 +748,9 @@ function renderStreak(
 
 export const cloudsLayerType: LayerTypeDefinition = {
   typeId: "atmosphere:clouds",
+  // Its bands and noise are sized as fractions of the layer, so they follow a
+  // device-resolution buffer without further scaling (ADR 111).
+  resolution: "device",
   displayName: "Clouds",
   icon: "cloud",
   category: "draw",

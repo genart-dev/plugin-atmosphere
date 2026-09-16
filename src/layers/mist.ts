@@ -96,6 +96,9 @@ function resolveProps(properties: LayerProperties): ResolvedMistProps {
 
 export const mistLayerType: LayerTypeDefinition = {
   typeId: "atmosphere:mist",
+  // Its bands and noise are sized as fractions of the layer, so they follow a
+  // device-resolution buffer without further scaling (ADR 111).
+  resolution: "device",
   displayName: "Mist",
   icon: "mist",
   category: "draw",

@@ -110,6 +110,9 @@ function resolveProps(properties: LayerProperties): ResolvedFogProps {
 
 export const fogLayerType: LayerTypeDefinition = {
   typeId: "atmosphere:fog",
+  // Its bands and noise are sized as fractions of the layer, so they follow a
+  // device-resolution buffer without further scaling (ADR 111).
+  resolution: "device",
   displayName: "Fog",
   icon: "fog",
   category: "draw",

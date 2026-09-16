@@ -98,6 +98,9 @@ function gradientAt(ny: number, direction: string): number {
 
 export const hazeLayerType: LayerTypeDefinition = {
   typeId: "atmosphere:haze",
+  // Its bands and noise are sized as fractions of the layer, so they follow a
+  // device-resolution buffer without further scaling (ADR 111).
+  resolution: "device",
   displayName: "Haze",
   icon: "haze",
   category: "draw",
